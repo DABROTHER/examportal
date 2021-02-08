@@ -133,8 +133,8 @@ export default function MiniDrawer(props) {
   const [selectedDate, setSelectedDate] = useState();
 //   const [value, onChange] = useState(new Date());
   const [showbox, setshowbox] = React.useState(false);
-  const [gender, setGender] = React.useState();
-  const [selectedValue, setSelectedValue] = React.useState();
+  const [gender, setGender] = React.useState('');
+  const [selectedValue, setSelectedValue] = React.useState('');
   const [country, setCountry] = React.useState('');
   const [hobbies, setHobbies] = React.useState([]);
 
@@ -157,6 +157,7 @@ export default function MiniDrawer(props) {
   const [masterpercentage, setMasterpercentage] = React.useState([]);
   const [masterpassingyear, setMasterpassingyear] = React.useState([]);
   const [user, setUser] = React.useState();
+  const [studentData, setStudentData] = React.useState([]);
   
 //   const [lastName, LsetastName] = React.useState([]);
 
@@ -186,9 +187,26 @@ export default function MiniDrawer(props) {
         if(!_usr){
           props.history.push(`/`)
         } else {
-            console.log("success")
+            // console.log("success")
           setUser(_usr.email)
         }
+    })
+    firebase
+    .firestore()
+    .collection("deftregistration")
+    .doc(user)
+    .get()
+    .then((doc) => {
+      if (doc.exists){
+        // console.log(doc.data());
+        setStudentData({data:doc.data()})
+      }
+      else{
+
+      }
+    })
+    .catch(err=>{
+        console.log("err",err)
     })
     // setTimeout(() => {
     //     firebase.auth().signOut()  
@@ -238,9 +256,10 @@ console.log("hobbbies",hobbies)
   const formRegistartion = (e) =>{
     e.preventDefault();
     // var nameRegex=[a-zA-Z]
+    console.log("studentdata",studentData.data)
     var getfirstName= document.getElementById("firstName").value;
-    var getlasttName= document.getElementById("lasttName").value;
-    // dob
+    var getlastName= document.getElementById("lasttName").value;
+    var getdob =document.getElementById("dob").value;
     var getemail= document.getElementById("email").value;
     var getmobilenumber= document.getElementById("mobilenumber").value;
     var getcity= document.getElementById("city").value;
@@ -260,17 +279,23 @@ console.log("hobbbies",hobbies)
     var getmasterboard= document.getElementById("masterboard").value;
     var getmasterpercentage= document.getElementById("masterpercentage").value;
     var getmasterpassingyear= document.getElementById("masterpassingyear").value;
-
+    // var getdate= selectedDate?selectedDate:studentData.data.DOB
+    var getgender =gender?gender:studentData.data.gender
+    var getcountry = country?country:studentData.data.country
+    var gethobbies = hobbies?hobbies:studentData.data.hobbies
+    var getcourse = selectedValue?selectedValue:studentData.data.course
   //   var fname= document.getElementById("fname").value;city
     // var fname= document.getElementById("fname").value;
-  console.log("value",getfirstName, getlasttName, getemail, selectedDate, getmobilenumber, gender, getcity, getpin, country, hobbies, selectedValue )
+  console.log("value",getfirstName, getlastName, getemail, getdob, getmobilenumber, gender, getcity, getpin, country, hobbies, selectedValue )
   console.log("classx",getclassxboard, getclassxpercentage, getclassxpassingyear)
   console.log("classxii",getclassxiiboard, getclassxiipercentage, getclassxiipassingyear)
   console.log("gradu", getgraduationboard, getgraduationpercentage, getgraduationpassingyear  )
   console.log("master", getmasterboard, getmasterpercentage, getmasterpassingyear)
-  console.log("error",firstname)
-  if(firstname ||lastName || email || mobilenumber ||city ||pin || classxboard || classxpercentage || classxpassingyear || classxiiboard
-    || classxiipercentage|| classxiipassingyear || graduationboard || graduationpercentage || graduationpassingyear || masterboard || masterpercentage || masterpassingyear 
+  console.log("error",lastName.length,firstname.length)
+  console.log("getname len",getdob.length);
+  console.log("getname",getfirstName);
+  if(firstname.length >0 ||lastName.length >0 || email.length >0 || mobilenumber.length >0 ||city.length >0 ||pin.length >0 || classxboard.length >0 || classxpercentage.length >0 || classxpassingyear.length >0 || classxiiboard.length >0
+    || classxiipercentage.length >0 || classxiipassingyear.length >0 || graduationboard.length >0 || graduationpercentage.length >0 || graduationpassingyear.length >0 || masterboard.length >0 || masterpercentage.length >0 || masterpassingyear.length >0 
     ){
     console.log("true")
     Swal.fire({
@@ -281,113 +306,53 @@ console.log("hobbbies",hobbies)
       })
   }
   else{
-      if(getfirstName && getlasttName && getemail && selectedDate && getmobilenumber && gender && getcity && getpin && country && hobbies &&
-         selectedValue && getclassxboard && getclassxpercentage && getclassxpassingyear && getclassxiiboard && getclassxiipercentage &&
-          getclassxiipassingyear && getgraduationboard && getgraduationpercentage && getgraduationpassingyear && getmasterboard && getmasterpercentage && getmasterpassingyear){
-console.log("all data")
-var password           = '';
-   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   var charactersLength = characters.length;
-   for ( var i = 0; i <6; i++ ) {
-    password += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-console.log("res",password)
-firebase
-.firestore()
-.collection("deftregistration")
-.doc(getemail)
-.get().then((doc) => {
-    if (doc.exists) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Already exist',
-            // footer: '<a href>Why do I have this issue?</a>'
-          })
-        // console.log("Document data:", doc.data());
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-        if(password){
-            firebase
-                .firestore()
-                .collection("deftregistration")
-                .doc(getemail)
-                .set({
-                   firstname: getfirstName,
-                   lastname:getlasttName,
-                   password:password,
-                   email:getemail,
-                   DOB:selectedDate,
-                   mobilenumber:getmobilenumber,
-                   gender:gender,
-                   city:getcity,
-                   pin:getpin,
-                   country:country,
-                   hobbies:hobbies,
-                   course:selectedValue,
-                   classxboard:getclassxboard,
-                   classxpercentage:getclassxpercentage,
-                   classxpassingyear:getclassxpassingyear,
-                   classxiiboard:getclassxiiboard,
-                   classxiipercentage:getclassxiipercentage,
-                   classxiipassingyear:getclassxiipassingyear,
-                   graduationboard:getgraduationboard,
-                   graduationpercentage:getgraduationpercentage,
-                   graduationpassingyear:getgraduationpassingyear,
-                   masterboard:getmasterboard,
-                   masterpercentage:getmasterpercentage,
-                   masterpassingyear:getmasterpassingyear,
-                   approved:false
-        
-                })
-                .then(res=>{
-                    console.log("res",res)
-                    const url =`To login, please click here: http://localhost:3000 and enter your email and password. Your credential are emai:${getemail}  , password: ${password}`;
-                    axios.post(`https://axlewebtech.com/scripts/mailing/live_chat/mail.php?to=${getemail}&subject=Live Chat Agent Account Created&body=${url}`)
-                  .then(res=>{
-                      console.log("success",res); 
-                      console.log("email",email)
-                      setTimeout(() => {
-                        firebase
-                          .auth()
-                          .createUserWithEmailAndPassword(getemail, password)
-                
-                      }, 5000)
-                    })
-                    .catch(err=>{
-                        console.log("err",err);
-                        console.log("email",email)
-                    });
-                    Swal.fire({
-                        icon: 'succes',
-                        title: 'We sent mail with login credential',
-                        text: 'please check mail',
-                        // footer: '<a href>Why do I have this issue?</a>'
-                      })
-                      .then(save=>{
-                          window.location.reload()
-                      })
-                })
-                .catch(err=>{
-                    console.log("err",err)
-                })
-        }
-    }
-}).catch((error) => {
-    console.log("Error getting document:", error);
-});
+    if(getfirstName.length >0 || getlastName.length >0 || getdob.length >0 || getmobilenumber.length >0 || gender.length >0 || getcity.length >0 || getpin.length >0 || country.length >0 || hobbies.length >0 ||
+      selectedValue.length >0 || getclassxboard.length >0 || getclassxpercentage.length >0 || getclassxpassingyear.length >0 || getclassxiiboard.length >0 || getclassxiipercentage.length >0 ||
+       getclassxiipassingyear.length >0 || getgraduationboard.length >0 || getgraduationpercentage.length >0 || getgraduationpassingyear.length >0 || getmasterboard.length >0 || 
+       getmasterpercentage.length >0 || getmasterpassingyear.length >0)
+       {
+        firebase
+        .firestore()
+        .collection("deftregistration")
+        .doc(user)
+        .update({
+           firstname: getfirstName?getfirstName:studentData.data.firstname,
+           lastname:getlastName?getlastName:studentData.data.lastname,
+           DOB:selectedDate?selectedDate:studentData.data.DOB,
+           mobilenumber:getmobilenumber?getmobilenumber:studentData.data.mobilenumber,
+           gender:gender?gender:studentData.data.gender,
+           city:getcity?getcity:studentData.data,city,
+           pin:getpin?getpin:studentData.data.pin,
+           country:country?country:studentData.data.country,
+           hobbies:hobbies?hobbies:studentData.data.hobbies,
+           course:selectedValue?selectedValue:studentData.data.course,
+           classxboard:getclassxboard?getclassxboard:studentData.data.classxboard,
+           classxpercentage:getclassxpercentage?getclassxpercentage:studentData.data.classxpercentage,
+           classxpassingyear:getclassxpassingyear?getclassxpassingyear:studentData.data.classxpassingyear,
+           classxiiboard:getclassxiiboard?getclassxiiboard:studentData.data.classxiiboard,
+           classxiipercentage:getclassxiipercentage?getclassxiipercentage:studentData.data.classxiipercentage,
+           classxiipassingyear:getclassxiipassingyear?getclassxiipassingyear:studentData.data.classxiipassingyear,
+           graduationboard:getgraduationboard?getgraduationboard:studentData.data.graduationboard,
+           graduationpercentage:getgraduationpercentage?getgraduationpercentage:studentData.data.graduationpercentage,
+           graduationpassingyear:getgraduationpassingyear?getgraduationpassingyear:studentData.data.graduationpassingyear,
+           masterboard:getmasterboard?getmasterboard:studentData.data.masterboard,
+           masterpercentage:getmasterpercentage?getmasterpercentage:studentData.data.masterpercentage,
+           masterpassingyear:getmasterpassingyear?getmasterpassingyear:studentData.data.masterpassingyear,
+          //  approved:false,
+          //  otp:false
 
-      }
-      else{
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please Fill all Filed',
-            // footer: '<a href>Why do I have this issue?</a>'
-          })
-      }
-      
+        })
+        .then(res=>{
+          alert("your data is updated")
+        })
+        .catch(err=>{
+          alert(err.message)
+        })
+       }
+       else{
+         alert("Please fill and updated atleast one information")
+       }
+
   }
 
 //   console.log("value", firstName, lasttName, email, selectedDate, mobilenumber, gender, city, pin, country, hobbies, selectedValue )
@@ -411,8 +376,13 @@ firebase
    switch (name) {
      case 'firstName': 
      console.log("firsname",value.match(nameRegex));
-     setFirstname(value.match(nameRegex)? ''
-        : 'max 30 characters a-z and A-Z')
+    //  value.length>0?value.match(nameRegex)?'':'max 30 characters a-z and A-Z':''
+    setFirstname(value.length>0?
+      value.match(nameRegex)?
+      '':'max 30 characters a-z and A-Z':'')
+    
+    //  setFirstname(value.match(nameRegex)? ''
+    //     : 'max 30 characters a-z and A-Z')
     //    setError.firstName = 
     //    value.match(nameRegex)
     //        ? ''
@@ -421,91 +391,136 @@ firebase
      case 'lastName': 
      console.log("lastname")
     //  setError({lastName: value.match(nameRegex)
-    setLastName(value.match(nameRegex)
-        ? ''
-        : 'max 30 characters a-z and A-Z'
+    setLastName(value.length>0?
+      value.match(nameRegex)?
+      '':'max 30 characters a-z and A-Z':''
     )
        break;
      case 'email': 
+     setEmail( value.length>0?
+      value.match(emailRegex)?
+      '':'Please enter correct email':'')
     //  setError({email: value.match(emailRegex)
-        setEmail( value.match(emailRegex)
-        ? ''
-        : 'Please enter correct email')
+        // setEmail( value.match(emailRegex)
+        // ? ''
+        // : 'Please enter correct email')
        break;
        case 'mobilenumber': 
-       setMobilenumber(value.match(mobileRegex)
-        ? ''
-        : 'Mobile number should be 10 (0-9)')
+       setMobilenumber(value.length>0?
+        value.match(mobileRegex)?
+        '':'Mobile number should be 10 (0-9)':'')
+      //  setMobilenumber(value.match(mobileRegex)
+      //   ? ''
+      //   : 'Mobile number should be 10 (0-9)')
        break;
        case 'city': 
-       setCity(value.match(nameRegex)
-        ? ''
-        : 'max 30 characters a-z and A-Z')
+       setCity(value.length>0?
+        value.match(nameRegex)?
+        '':'max 30 characters a-z and A-Z':'')
        break;
        case 'pin': 
-       setPin( value.match(pinRegex)
-        ? ''
-        : 'pin should be 6 (0-9)')
+       setPin(value.length>0?
+        value.match(pinRegex)?
+        '':'pin should be 6 (0-9)':'')
+      //  setPin( value.match(pinRegex)
+      //   ? ''
+      //   : 'pin should be 6 (0-9)')
        break;
        case 'classxboard': 
-       setClassxboard(value.match(boardRegex)
-        ? ''
-        : 'max 10 characters a-z and A-Z')
+       setClassxboard(value.length>0?
+        value.match(boardRegex)?
+        '':'max 10 characters a-z and A-Z':'')
+      //  setClassxboard(value.match(boardRegex)
+      //   ? ''
+      //   : 'max 10 characters a-z and A-Z')
        break;
        case 'classxpercentage': 
-       setClassxpercentage(value.match(percentageRegex)
-        ? ''
-        : 'max 2 digits 0-9')
+       setClassxpercentage(value.length>0?
+        value.match(percentageRegex)?
+        '':'max 2 digits 0-9':'')
+      //  setClassxpercentage(value.match(percentageRegex)
+      //   ? ''
+      //   : 'max 2 digits 0-9')
        break;
        case 'classxpassingyear': 
-       setClassxpassingyear(value.match(passingyearRegex)
-          ? ''
-          : 'Passing year should be 4 digits 0-9')
+       setClassxpassingyear(value.length>0?
+        value.match(passingyearRegex)?
+        '':'Passing year should be 4 digits 0-9':'')
+      //  setClassxpassingyear(value.match(passingyearRegex)
+      //     ? ''
+      //     : 'Passing year should be 4 digits 0-9')
          break;
          case 'classxiiboard': 
-         setClassxiiboard(value.match(boardRegex)
-        ? ''
-        : 'max 10 characters a-z and A-Z')
+         setClassxiiboard(value.length>0?
+          value.match(boardRegex)?
+          '':'max 10 characters a-z and A-Z':'')
+        //  setClassxiiboard(value.match(boardRegex)
+        // ? ''
+        // : 'max 10 characters a-z and A-Z')
        break;
        case 'classxiipercentage': 
-       setClassxiipercentage(value.match(percentageRegex)
-        ? ''
-        : 'max 2 digits 0-9')
+       setClassxiipercentage(value.length>0?
+        value.match(percentageRegex)?
+        '':'max 2 digits 0-9':'')
+      //  setClassxiipercentage(value.match(percentageRegex)
+      //   ? ''
+      //   : 'max 2 digits 0-9')
         break;
         case 'classxiipassingyear': 
-        setClassxiipassingyear(value.match(passingyearRegex)
-          ? ''
-          : 'Passing year should be 4 digits 0-9')
+        setClassxiipassingyear(value.length>0?
+          value.match(passingyearRegex)?
+          '':'Passing year should be 4 digits 0-9':'')
+        // setClassxiipassingyear(value.match(passingyearRegex)
+        //   ? ''
+        //   : 'Passing year should be 4 digits 0-9')
          break;
          case "graduationboard":
-            setGraduationboard(value.match(boardRegex)
-            ? ''
-            : 'max 10 characters a-z and A-Z')
+          setGraduationboard(value.length>0?
+            value.match(boardRegex)?
+            '':'max 10 characters a-z and A-Z':'')
+            // setGraduationboard(value.match(boardRegex)
+            // ? ''
+            // : 'max 10 characters a-z and A-Z')
            break;
            case 'graduationpercentage': 
-           setGraduationpercentage(value.match(percentageRegex)
-        ? ''
-        : 'max 2 digits 0-9')
+           setGraduationpercentage(value.length>0?
+            value.match(percentageRegex)?
+            '':'max 2 digits 0-9':'')
+        //    setGraduationpercentage(value.match(percentageRegex)
+        // ? ''
+        // : 'max 2 digits 0-9')
         break;
         case 'graduationpassingyear': 
-        setGraduationpassingyear(value.match(passingyearRegex)
-           ? ''
-           : 'Passing year should be 4 digits 0-9')
+        setGraduationpassingyear(value.length>0?
+          value.match(passingyearRegex)?
+          '':'Passing year should be 4 digits 0-9':'')
+        // setGraduationpassingyear(value.match(passingyearRegex)
+        //    ? ''
+        //    : 'Passing year should be 4 digits 0-9')
           break;
           case "masterboard":
-            setMasterboard(value.match(boardRegex)
-                ? ''
-                : 'max 10 characters a-z and A-Z')
+            setMasterboard(value.length>0?
+              value.match(boardRegex)?
+              '':'max 10 characters a-z and A-Z':'')
+            // setMasterboard(value.match(boardRegex)
+            //     ? ''
+            //     : 'max 10 characters a-z and A-Z')
             break;
-            case 'masterpercentage': 
-            setMasterpercentage(value.match(percentageRegex)
-            ? ''
-            : 'max 2 digits 0-9')
+            case 'masterpercentage':
+              setMasterpercentage(value.length>0?
+                value.match(percentageRegex)?
+                '':'max 2 digits 0-9':'')
+            // setMasterpercentage(value.match(percentageRegex)
+            // ? ''
+            // : 'max 2 digits 0-9')
             break;
             case 'masterpassingyear': 
-            setMasterpassingyear(value.match(passingyearRegex)
-           ? ''
-           : 'Passing year should be 4 digits 0-9')
+            setMasterpassingyear(value.length>0?
+              value.match(passingyearRegex)?
+              '':'Passing year should be 4 digits 0-9':'')
+          //   setMasterpassingyear(value.match(passingyearRegex)
+          //  ? ''
+          //  : 'Passing year should be 4 digits 0-9')
           break;
           default:
             break;
@@ -646,7 +661,7 @@ firebase
 		<div className="login-content">
 			<form   onSubmit={formRegistartion}>
 				{/* <img src={avtar}/> */}
-				<h2 className="title">Update* (Only UI is done not backend) </h2>
+				<h2 className="title">Update </h2>
            		{/* <div className="input-div one">
            		   <div className="i">
            		   		<i className="fas fa-user"></i>
@@ -661,7 +676,7 @@ firebase
                 autoComplete="fname"
                 name="firstName"
                 variant="outlined"
-                required
+              
                 fullWidth
                 id="firstName"
                 label="First Name"
@@ -671,7 +686,7 @@ firebase
                 // error={true}	
                 // maxlength="3"
               />
-              {console.log("error.firstName",firstname)}
+              {/* {console.log("error.firstName",firstname)} */}
                {firstname.length>0 && 
                 <span className='error'>{firstname}</span>}
             </Grid>
@@ -680,7 +695,7 @@ firebase
                 autoComplete="fname"
                 name="lastName"
                 variant="outlined"
-                required
+                
                 fullWidth
                 id="lasttName"
                 label="Last Name"
@@ -694,7 +709,7 @@ firebase
             <Grid item xs={12} sm={4}>
               <TextField
                 variant="outlined"
-                required
+                
                 fullWidth
                 id="email"
                 label="Email"
@@ -710,7 +725,8 @@ firebase
             <br/>
             <Grid container spacing={1}>
             <Grid item xs={12} sm={4}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <input style={{width:"100%", fontSize:"35px", fontFamily:"arial-black", color:'rgb(213 213 213)'}} type="date" id="dob" ></input>
+            {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-around">
        
             <KeyboardDatePicker
@@ -720,21 +736,21 @@ firebase
           format="MM/dd/yyyy"
         //   selected='enterdate'
           value={selectedDate}
-          required
+          
           onChange={handleDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
         />
       </Grid>
-    </MuiPickersUtilsProvider>
+    </MuiPickersUtilsProvider> */}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
                 autoComplete="fname"
                 name="mobilenumber"
                 variant="outlined"
-                required
+                
                 fullWidth
                 type="number"
                 id="mobilenumber"
@@ -780,7 +796,7 @@ firebase
                 autoComplete="fname"
                 name="city"
                 variant="outlined"
-                required
+                
                 fullWidth
                 id="city"
                 label="City"
@@ -796,7 +812,7 @@ firebase
                 autoComplete="fname"
                 name="pin"
                 variant="outlined"
-                required
+                
                 fullWidth
                 type="number"
                 id="pin"
@@ -911,16 +927,16 @@ firebase
   <tr>
     <th>Sl.No.	Examination	
     </th>
-    <th>Board* (only text)
+    <th>Board (only text)
         <br/>
         (10 char max)
        {/* <font aline="center" size="1px">hh</font> */}
     </th>
-    <th>Percentage* (only number)
+    <th>Percentage (only number)
     <br/>
         (upto 2 digits)
     </th>
-    <th>Year of Passing* (only number)
+    <th>Year of Passing (only number)
     <br/>
         (4 digits)
     </th>
@@ -928,19 +944,19 @@ firebase
   <tr>
     <td>	Class X</td>
     <td>
-    <input required id="classxboard" name="classxboard" placeholder="*" onChange={ValidationHandle} type="text"/>
+    <input id="classxboard" name="classxboard" placeholder="" onChange={ValidationHandle} type="text"/>
     {/* {console.log("error.classxboard",error.classxboard)} */}
                {classxboard && 
                 <span className='error'>{classxboard}</span>}
     </td>
     <td>
-        <input id="classxpercentage" required name="classxpercentage" placeholder="*" onChange={ValidationHandle} type="number"/>
+        <input id="classxpercentage" name="classxpercentage" placeholder="" onChange={ValidationHandle} type="number"/>
         {/* {console.log("error.classxpercentage",error.classxpercentage)} */}
                {classxpercentage && 
                 <span className='error'>{classxpercentage}</span>}
     </td>
     <td>
-        <input id="classxpassingyear" required name="classxpassingyear" onChange={ValidationHandle}  type="number"/>
+        <input id="classxpassingyear" name="classxpassingyear" onChange={ValidationHandle}  type="number"/>
         {/* {console.log("error.classxpassingyear",error.classxpassingyear)} */}
                {classxpassingyear && 
                 <span className='error'>{classxpassingyear}</span>}
@@ -948,18 +964,18 @@ firebase
   </tr>
   <tr>
     <td>Class XII</td>
-    <td><input id="classxiiboard" required name="classxiiboard" onChange={ValidationHandle} type="text"/>
+    <td><input id="classxiiboard" name="classxiiboard" onChange={ValidationHandle} type="text"/>
     {/* {console.log("error.classxiiboard",error.classxiiboard)} */}
                {classxiiboard && 
                 <span className='error'>{classxiiboard}</span>}
     </td>
     <td>
-        <input id="classxiipercentage" required name="classxiipercentage" onChange={ValidationHandle} type="number"/>
+        <input id="classxiipercentage" name="classxiipercentage" onChange={ValidationHandle} type="number"/>
         {/* {console.log("error.classxiipercentage",error.classxiipercentage)} */}
                {classxiipercentage && 
                 <span className='error'>{classxiipercentage}</span>}
         </td>
-    <td><input id="classxiipassingyear" required name="classxiipassingyear" onChange={ValidationHandle} type="number"/>
+    <td><input id="classxiipassingyear" name="classxiipassingyear" onChange={ValidationHandle} type="number"/>
     {/* {console.log("error.classxiipassingyear",error.classxiipassingyear)} */}
                {classxiipassingyear && 
                 <span className='error'>{classxiipassingyear}</span>}
@@ -967,17 +983,17 @@ firebase
   </tr>
   <tr>
     <td>Graduation</td>
-     <td><input id="graduationboard" required name="graduationboard" onChange={ValidationHandle} type="text"/>
+     <td><input id="graduationboard" name="graduationboard" onChange={ValidationHandle} type="text"/>
      {/* {console.log("error.graduationboard",error.graduationboard)} */}
                {graduationboard && 
                 <span className='error'>{graduationboard}</span>}
      </td>
-     <td><input id="graduationpercentage" required name="graduationpercentage" onChange={ValidationHandle} type="number"/>
+     <td><input id="graduationpercentage" name="graduationpercentage" onChange={ValidationHandle} type="number"/>
      {/* {console.log("error.graduationpercentage",error.graduationpercentage)} */}
                {graduationpercentage && 
                 <span className='error'>{graduationpercentage}</span>}
      </td>
-     <td><input id="graduationpassingyear" required name="graduationpassingyear" onChange={ValidationHandle} type="number"/>
+     <td><input id="graduationpassingyear" name="graduationpassingyear" onChange={ValidationHandle} type="number"/>
      {/* {console.log("error.graduationpassingyear",error.graduationpassingyear)} */}
                {graduationpassingyear && 
                 <span className='error'>{graduationpassingyear}</span>}
@@ -985,17 +1001,17 @@ firebase
   </tr>
   <tr>
     <td>Masters</td>
-    <td><input id="masterboard" required name="masterboard" onChange={ValidationHandle} type="text"/>
+    <td><input id="masterboard" name="masterboard" onChange={ValidationHandle} type="text"/>
     {/* {console.log("error.masterboard",error.masterboard)} */}
                {masterboard && 
                 <span className='error'>{masterboard}</span>}
     </td>
-    <td><input id="masterpercentage" required name="masterpercentage" onChange={ValidationHandle} type="number"/>
+    <td><input id="masterpercentage" name="masterpercentage" onChange={ValidationHandle} type="number"/>
     {/* {console.log("error.masterpercentage",error.masterboard)} */}
                {masterpercentage && 
                 <span className='error'>{masterpercentage}</span>}
     </td>
-    <td><input id="masterpassingyear" required name="masterpassingyear" onChange={ValidationHandle} type="number"/>
+    <td><input id="masterpassingyear" name="masterpassingyear" onChange={ValidationHandle} type="number"/>
     {/* {console.log("error.masterpassingyear",error.masterpassingyear)} */}
                {masterpassingyear && 
                 <span className='error'>{masterpassingyear}</span>}

@@ -9,7 +9,8 @@ import ForgetPassword from './components/pages/forgetpassword';
 import Adminlogin from "./components/admin/login";
 import AdminDashboard from './components/admin/admindashboard';
 import StudentUpdate from './components/pages/updateStudentDetails';
-import ChangePassword from './components/pages/LoggedChangePassword'
+import ChangePassword from './components/pages/LoggedChangePassword';
+import OTP from './components/pages/otp'
 firebase.initializeApp({
   apiKey: "AIzaSyCIuQ5sVGLz0n3uHwnj_8E1kW_PoJ6WLxo",
     authDomain: "customerapp-50d98.firebaseapp.com",
@@ -30,7 +31,8 @@ function App() {
         <Route exact path="/admin/login" component={Adminlogin} />
         <Route exact path="/admin/dashboard" component={AdminDashboard} />
         <Route exact path="/update" component={StudentUpdate} />
-        <Route exact path="/changepassword" component={ChangePassword} />  
+        <Route exact path="/changepassword" component={ChangePassword} /> 
+        <Route exact path="/otp" component={OTP} />  
       </Router>
       
     </div>
